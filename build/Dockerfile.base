@@ -1,0 +1,90 @@
+FROM alpine:3.7
+
+ARG SSH_PRIVATE_KEY
+ARG GITHUB_AUTH
+
+RUN apk add --no-cache \
+        php7 \
+        php7-curl \
+        php7-json \
+        php7-phar \
+        php7-amqp \
+        php7-imagick \
+        php7-memcached \
+        php7-common \
+        php7-mbstring \
+        php7-openssl \
+        php7-fileinfo \
+        php7-gd \
+        php7-mysqli \
+        php7-dom \
+        php7-pdo \
+        php7-pdo_mysql \
+        php7-bcmath \
+        php7-sockets \
+        php7-soap \
+        php7-zip \
+        php7-intl \
+        php7-bz2 \
+        php7-calendar \
+        php7-ctype \
+        php7-exif \
+        php7-gmp \
+        php7-pcntl \
+        php7-sysvmsg \
+        php7-sysvsem \
+        php7-sysvshm \
+        php7-wddx \
+        php7-fpm \
+        php7-xmlrpc \
+        php7-xsl \
+        php7-opcache \
+        php7-tidy \
+        php7-xmlrpc \
+        php7-xmlwriter \
+        php7-xmlreader \
+        php7-tokenizer \
+        php7-iconv \
+        php7-mcrypt \
+        php7-redis \
+        php7-pear php7-dev gcc musl-dev make \
+        && apk add --no-cache nginx supervisor memcached openssh bash su-exec sudo busybox-suid git \
+        && ln -s /usr/sbin/php-fpm7 /usr/bin/php-fpm \
+        && pecl channel-update pecl.php.net \
+        && pecl install mongodb \
+        && echo "extension=mongodb.so" >> /etc/php7/php.ini \
+        && apk del autoconf php7-pear php7-dev gcc musl-dev make \
+        && rm -rf /tmp/pear
+
+# set app workdir
+ENV PROJECT_PATH=/home/www-data/app
+WORKDIR $PROJECT_PATH
+
+# php related
+COPY php7.1.33-fpm-nginx/build/php/php.ini /usr/local/etc/php/
+
+# install composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+    && php -r "unlink('composer-setup.php');"
+
+#etc
+COPY php7.1.33-fpm-nginx/build/etc/motd /etc/motd
+
+#supervisor
+COPY php7.1.33-fpm-nginx/build/supervisor/supervisor.conf /etc/supervisor/conf.d/
+
+RUN rm -rf $PROJECT_PATH/php7.1.33-fpm-nginx/build
+
+#sudoers
+RUN echo "www-data ALL=(ALL) NOPASSWD: /usr/bin/supervisord" > /etc/sudoers.d/www-data \
+    && chmod 0440 /etc/sudoers.d/www-data \
+    #add www-data user
+    && set -x ; \
+        addgroup -g 82 -S www-data ; \
+        adduser -u 82 -D -S -G www-data www-data && exit 0 ; exit 1
+
+#drop privileges
+USER www-data
+
+RUN composer global require hirak/prestissimo

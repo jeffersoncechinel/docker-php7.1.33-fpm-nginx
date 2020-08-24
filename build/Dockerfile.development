@@ -1,0 +1,26 @@
+FROM jeffersoncechinel/php7.1.33-fpm-nginx-base:v1
+
+ARG SSH_PRIVATE_KEY
+ARG GITHUB_AUTH
+
+# set app workdir
+ENV PROJECT_PATH=/home/www-data/app
+WORKDIR $PROJECT_PATH
+
+#nginx
+COPY php7.1.33-fpm-nginx/build/nginx/nginx.conf /etc/nginx/
+COPY php7.1.33-fpm-nginx/build/nginx/conf.d/* /etc/nginx/conf.d/
+#supervisor
+COPY php7.1.33-fpm-nginx/build/supervisor/supervisor.conf /etc/supervisor/conf.d/
+#cron
+COPY php7.1.33-fpm-nginx/build/crontabs/www-data /var/spool/cron/crontabs/www-data
+#entrypoint script
+COPY --chown=www-data:www-data php7.1.33-fpm-nginx/build/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+WORKDIR /home/www-data
+
+# drop privileges
+USER www-data
+EXPOSE 8080
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
