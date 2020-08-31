@@ -1,4 +1,4 @@
-# php7.1.33-fpm-nginx
+# docker-php7.1.33-fpm-nginx
 This package provides a set of tools to build and run docker containers ready for php web applications. The containers are based on **Alpine Linux 3.7 + PHP 7.1.33 FPM** + **NGINX** 
 
 ## Key Features
