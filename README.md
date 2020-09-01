@@ -15,7 +15,7 @@ Create a new folder and clone this repository into it
 ```bash
 mkdir project
 cd project
-git clone https://github.com/jeffersoncechinel/php7.1.33-fpm-nginx.git
+git clone https://github.com/jeffersoncechinel/docker-php7.1.33-fpm-nginx.git
 ```
 
 Now create and empty folder called "src" and copy your web application project inside of it
@@ -33,28 +33,28 @@ The develop image is optimized for productivity it uses docker volumes to share 
 
 Create and run the container based on the **develop** image
 ```bash
-# php7.1.33-fpm-nginx/bin/run.sh develop
+# docker-php7.1.33-fpm-nginx/bin/run.sh develop
 ```
 
 ### For stage environment
 Create and run the container based on the **stage** image
 ```bash
-# php7.1.33-fpm-nginx/bin/run.sh stage
+# docker-php7.1.33-fpm-nginx/bin/run.sh stage
 ```
 
 ### For production environment
 Create and run the container based on the **production** image
 ```bash
-# php7.1.33-fpm-nginx/bin/run.sh production
+# docker-php7.1.33-fpm-nginx/bin/run.sh production
 ```
 
 ## Advanced
 By default the containers are created based on the base image hosted at [docker hub](https://hub.docker.com/repository/docker/jeffersoncechinel/php7.1.33-fpm-nginx-base). However if you prefer to build the image yourself use the build command.
 
 ```bash
-# php7.1.33-fpm-nginx/bin/build.sh base|develop|stage|production
+# docker-php7.1.33-fpm-nginx/bin/build.sh base|develop|stage|production
 ```
 You can set a custom name for the final images
 ```bash
-# php7.1.33-fpm-nginx/bin/build.sh base|develop|stage|production repository/name:tag
+# docker-php7.1.33-fpm-nginx/bin/build.sh base|develop|stage|production repository/name:tag
 ```
